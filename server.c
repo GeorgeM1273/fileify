@@ -68,6 +68,7 @@ return 1;
 }
 printf("File Server - PID: %d\n", getpid());
 printf("Waiting for a client on port %d...\n", PORT);
+
 /* Wait until a client connects. */
 client_fd = accept(server_fd, NULL, NULL);
 if (client_fd == -1)
@@ -93,7 +94,7 @@ if (fileIndex == -1) {
         write(client_fd, reply, strlen(reply) + 1);
     } else {
         char reply[] = "File found! Sending...";
-        size_t bytesRead = fread(buffer, 1, BUFFER_SIZE, file);
+        size_t bytesRead;
        while ((bytesRead = fread(buffer, 1, BUFFER_SIZE, file)) > 0) {
             write(client_fd, buffer, bytesRead);
         }

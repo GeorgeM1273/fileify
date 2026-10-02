@@ -44,9 +44,7 @@ FILE *new = fopen("recieved.flac", "wb");  //god bless flac
     }
 fclose(new);
 
-/* Receive the server's response. */
-read(client_fd, buffer, sizeof(buffer));
-printf("Client received: %s\n", buffer);
+
 close(client_fd);
 return 0;
 }
