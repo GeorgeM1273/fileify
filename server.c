@@ -95,12 +95,29 @@ if (fileIndex == -1) {
     } else {
         char reply[] = "File found! Sending...";
         size_t bytesRead;
-       while ((bytesRead = fread(buffer, 1, BUFFER_SIZE, file)) > 0) {
-            write(client_fd, buffer, bytesRead);
+      while ((bytesRead = fread(buffer, 1, BUFFER_SIZE, file)) > 0) {
+
+    size_t totalSent = 0;
+
+    while (totalSent < bytesRead) {
+
+        ssize_t bytesSent = write(
+            client_fd,
+            buffer + totalSent,
+            bytesRead - totalSent
+        );
+
+        if (bytesSent < 0) {
+            perror("write");
+            fclose(file);
+            close(client_fd);
+            return 1;
         }
 
-        write(client_fd, reply, strlen(reply) + 1);
-        // code to read from 'file' and write to client_fd would go here
+        totalSent += bytesSent;
+    }
+}
+
     }
 printf("Response sent.\n");
 fclose(file);

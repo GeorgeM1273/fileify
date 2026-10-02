@@ -21,7 +21,7 @@ server.sin_family = AF_INET;
 inet_pton(AF_INET, "172.20.90.239", &server.sin_addr);
 server.sin_port = htons(PORT);
 
-/* Connect to the server on localhost:5000. */
+/* Connect to the server on :5000. */
 
 if (connect(client_fd,(struct sockaddr *)&server,sizeof(server)) < 0)
 {
