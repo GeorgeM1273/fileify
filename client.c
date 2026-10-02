@@ -18,7 +18,7 @@ char buffer[BUFFER_SIZE] = {0};
 client_fd = socket(AF_INET, SOCK_STREAM, 0);
 if (client_fd < 0) { perror("socket"); return 1; }
 server.sin_family = AF_INET;
-server.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+inet_pton(AF_INET, "172.20.90.239", &server.sin_addr);
 server.sin_port = htons(PORT);
 
 /* Connect to the server on localhost:5000. */
