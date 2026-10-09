@@ -98,7 +98,7 @@ void *worker(void *arg) {
         if (pool->count == 0 && pool->shutdown) {
             pthread_mutex_unlock(&pool->mutex);
             break;
-        } //unloack and break out, returning null
+        } //unlock and break out, returning null
 
         task = pool->queue[pool->front];
         pool->front = (pool->front + 1) % QUEUE_SIZE; //queue is circular, so we wrap around
@@ -162,6 +162,8 @@ int main(void) {
 
     strcpy(songList[0].songName, "The");
     strcpy(songList[0].filePath, "The.flac");
+    strcpy(songList[1].songName, "JBMHR");
+    strcpy(songList[1].filePath, "JBMHR.flac");
 
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd == -1) {

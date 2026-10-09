@@ -26,7 +26,7 @@ int main(void) {
     server.sin_family = AF_INET;
     server.sin_port = htons(PORT);
 
-    if (inet_pton(AF_INET, "10.1.36.226", &server.sin_addr) <= 0) {
+    if (inet_pton(AF_INET, "10.2.146.76", &server.sin_addr) <= 0) {
         perror("inet_pton");
         close(client_fd);
         return 1;
@@ -69,6 +69,7 @@ int main(void) {
     while ((bytes_received = recv(client_fd, buffer, BUFFER_SIZE, 0)) > 0) {
         fwrite(buffer, 1, bytes_received, file);
         total_bytes += bytes_received;
+        printf("\rReceived %zd bytes, total: %zu MegaBytes", bytes_received, total_bytes/1000000);
     }
 
     if (bytes_received < 0) {
