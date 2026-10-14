@@ -45,6 +45,8 @@ int findFile(char *filename, Song songList[], int size) {
     return -1;
 }
 
+
+//good ol client , each worker thread 1 per job
 void handle_client(int client_fd) {
     char buffer[BUFFER_SIZE]; // Local thread-safe buffer
 
@@ -66,13 +68,15 @@ void handle_client(int client_fd) {
         return;
     }
 
+
+  //most of this is function is what remains of assignment 2, the core logic just gets delegated with threads
     FILE *file = fopen(songList[index].filePath, "rb");
     if (!file) {
         perror("fopen");
         const char *err_msg = "Error opening file\n";
         write(client_fd, err_msg, strlen(err_msg));
         close(client_fd);
-        return; //if there is an error we should return here to avoid the rest of the function
+        return; //if there is an error we should return/break out of the function here to avoid the rest of the function
     }
 
     while ((n = fread(buffer, 1, BUFFER_SIZE, file)) > 0) {
@@ -84,6 +88,8 @@ void handle_client(int client_fd) {
     printf("[Worker %lu] Transfer complete.\n", (unsigned long)pthread_self());
 }
 
+
+//this is the worker function, lowlevel worker logic
 void *worker(void *arg) {
     thread_pool_t *pool = (thread_pool_t *)arg;
 
@@ -92,10 +98,10 @@ void *worker(void *arg) {
 
         pthread_mutex_lock(&pool->mutex); //lock mutex and wait for job
         while (pool->count == 0 && !pool->shutdown) {
-            pthread_cond_wait(&pool->not_empty, &pool->mutex);
+            pthread_cond_wait(&pool->not_empty, &pool->mutex); 
         }
 
-        if (pool->count == 0 && pool->shutdown) {
+        if (pool->count == 0 && pool->shutdown) { //shutdown conditon 
             pthread_mutex_unlock(&pool->mutex);
             break;
         } //unlock and break out, returning null
@@ -104,8 +110,8 @@ void *worker(void *arg) {
         pool->front = (pool->front + 1) % QUEUE_SIZE; //queue is circular, so we wrap around
         pool->count--; //decrament count of jobs in queue
 
-        pthread_cond_signal(&pool->not_full);
-        pthread_mutex_unlock(&pool->mutex);
+        pthread_cond_signal(&pool->not_full); 
+        pthread_mutex_unlock(&pool->mutex); //unlock the 
 
         handle_client(task.client_fd); //execute the job.
     }
